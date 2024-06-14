@@ -1,0 +1,104 @@
+{% extends 'Base.html' %}
+{% block curDisplay %}
+{% if currentDisplay %}
+Displaying: {{ currentDisplay }}
+{% else %}
+Displaying: Nothing
+{% endif %}
+{% endblock %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .setting-item, .expression-item {
+            background: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .underline {
+            text-decoration: underline;
+        }
+    </style>    
+    <div class="container">
+
+        <h2>Settings</h2>
+        {% for key, pair in settings.items() %}
+            <div class="setting-item">
+                <label for="{{key}}">{{key}}</label>
+                <input id="{{key}}" type="text" value="{{pair}}">
+            </div>
+        {% endfor %}
+
+        <h2 class="underline">Expressions</h2>
+        <form id="expression-form">
+            {% for expression in expr %}
+            <div id="{{expression}}" class="expression-item">
+                <input type="checkbox" name="{{expression}}">
+                <label for="{{expression}}">{{expression}}</label>
+            </div>
+            {% endfor %}
+            <!-- More expressions here -->
+            <button id="deleteBtn" type="submit">Delete Selected</button>
+        </form>
+    </div>
+
+    <script>
+        let sanityCheck = false;
+        const form = document.getElementById('expression-form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!sanityCheck) {
+                let deleteButton = document.getElementById("deleteBtn");
+                deleteButton.style.backgroundColor = "red";
+                deleteButton.innerText = "Are you sure?";
+                sanityCheck = true;
+                return
+            }else {
+                sanityCheck = false;
+                let deleteButton = document.getElementById("deleteBtn");
+                deleteButton.innerText = "Deleting...";
+                deleteButton.style.backgroundColor = "mint";
+            }
+            let formData = new FormData(form);
+
+            $.ajax({
+                type: "POST",
+                url: "/settings",               // modify with your endpoint
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done((response) => {
+                console.log(response)
+                // Remove loading animation and display element again when request is complete
+                showToast(`Deleted ${Array.from(formData.keys()).length} expressions`, response)
+                let deleteButton = document.getElementById("deleteBtn");
+                deleteButton.style.backgroundColor = ""
+                deleteButton.innerText = "Delete Selected"
+                formData.forEach( (value, key, parent) =>{
+                    console.log(value, key)
+                    document.getElementById(key).remove()
+                })
+
+            }).fail(() => {
+                console.log("Error in POST request");
+                showToast("Failed to delete items", "error")
+            });
+        });
+    </script>
+{% endblock %}

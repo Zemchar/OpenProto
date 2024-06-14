@@ -1,0 +1,8 @@
+{
+  "chain_count": 2,
+    "columns": 32,
+    "rows": 16,
+    "remapping": "adafruit",
+    "brightness" : 100,
+  "password-protected": false
+}

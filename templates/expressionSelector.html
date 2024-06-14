@@ -1,0 +1,103 @@
+{% extends "Base.html" %}
+{% block title %}Expression Select{% endblock %}
+{% block head %}
+{{ super() }}
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 15px;
+        padding: 10px;
+        justify-content: center;
+    }
+
+    .loading {
+        display: flex;
+        position: fixed;
+        z-index: 9998;
+        background-color: var(--accent);
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        left: 0;
+    }
+
+    .loading div {
+        width: 10px;
+        height: 10px;
+        margin: 0 5px;
+        border-radius: 50%;
+        background: #333;
+        animation: loading 0.8s linear infinite;
+    }
+
+    .loading div:nth-child(odd) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes loading {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(10px);
+        }
+        100% {
+            transform: translateY(0px);
+        }
+    }
+
+    .grid-item {
+        border: 2px solid rgba(0, 0, 0, 0.5);
+        background-color: var(--secondary);
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        height: 200px;
+        flex-basis: calc(50% - 15px); /* it will make sure there are at least two items per row */
+        flex-shrink: 1; /* Items can shrink letting more items fit in a row */
+        flex-grow: 1; /* Items can grow to use up any remaining space */
+    }
+</style>
+{% endblock %}
+{% block curDisplay %}
+{% if currentDisplay %}
+Displaying: {{ currentDisplay }}
+{% else %}
+Displaying: Nothing
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="loading" id="loadingDiv" style="visibility: visible;">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+<div class="grid-container">
+    {% if files %}
+    {% for file, data_url in files.items() %}
+    <div class="grid-item" data-id="{{file}}" onclick="communicateSelection('{{file}}')">
+        <h2>{{ file.split(".")[0] }}</h2>
+        <img src="{{ data_url }}" alt="{{ file }}" style="height:80%; width:100%; object-fit: scale-down">
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No content available.</p>
+    {% endif %}
+</div>
+<script>window.onload = function () {
+    var loadingDiv = document.getElementById('loadingDiv');
+    loadingDiv.style.transition = "opacity 0.5s ease-in-out";
+    loadingDiv.style.opacity = 0;
+    loadingDiv.addEventListener("transitionend", ()=>{loadingDiv.remove()})
+}</script>
+{% endblock %}
