@@ -126,7 +126,7 @@ Displaying: Nothing
             <div style="display: flex; margin-top:10px; justify-content: space-between;">
                 <span>
                     <label id="Speed" for="speed1">Speed: </label><br>
-                    <input oninput="updateFrames(this)" type="range" id="speed1" name="speed1" min="25" max="125" value="25">
+                    <input oninput="updateFrames(this)" type="range" id="speed1" name="speed1" min="1" max="20" value="2.5" step="1">
                 </span>
                 <span>
                     <label id="yPosLabel" for="ypos">Y Position</label><br>
@@ -162,10 +162,10 @@ Displaying: Nothing
     </div>
     <div style="display: grid; gap: 5px; grid-template-columns: auto auto">
         <button onClick="generateGif()">Restart Animation</button>
-        <button>Save Animation</button>
+        <button onclick="saving = true; generateGif()">Save Animation</button>
     </div>
     <hr>
-    <div id="gifCanvas"></div>
+    <div id="gifCanvas" class="pixelify-sans"></div>
     <h1 id="ScreenTooSmallWarning" style="color: red; text-align: center; padding-left: 2px">Your screen is too small to render split panel animations, but one will still be created</h1>
 
     <!-- Add more sections by duplicating the above div, ensure unique IDs -->
@@ -173,11 +173,15 @@ Displaying: Nothing
 
 <meta id="usrSettings" data-width="{{ settings['columns'] * settings['chain_count'] }}"
       data-height="{{ settings['rows'] }}">
-<script src="https://unpkg.com/konva@9/konva.min.js"></script>
 <script src="../static/js/gif.js"></script>
 <script src="{{ url_for('static', filename='js/gif.js') }}"></script>
-
+    <script src="https://unpkg.com/gifshot@0.4.5/dist/gifshot.js"></script>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
 <script>
+    let saving = false
+    
+    
+
     function updateAllowedButtons(event) {
 
         let buttons = document.querySelectorAll('.animation-btn');
@@ -199,7 +203,7 @@ Displaying: Nothing
 }
 
 let usrSettings
-    let speedMultiplier = 50;
+    let speedMultiplier = 0;
     window.onload = () => {
         updateFrames(document.querySelector("#speed1"))
         let d =  document.getElementById("usrSettings").dataset
@@ -209,131 +213,174 @@ let usrSettings
         document.querySelector("#splitPanels").checked=false;
     }
 
-    function generateGif(){
-        let splitPanels = document.querySelector("#splitPanels").checked
-        var stage
-        if(splitPanels &&  window.innerWidth <= 480) {
-            stage = new Konva.Stage({
-                container: 'gifCanvas',
-                width: usrSettings.w * 10,
-                height: usrSettings.h * 10,
-            })
-            document.querySelector("#gifCanvas").hidden = true
-            document.querySelector("#ScreenTooSmallWarning").hidden = false
-        }else {
-            stage = new Konva.Stage({
-                container: 'gifCanvas',
-                width: window.innerWidth <= 480? usrSettings.w*5: usrSettings.w * 10,
-                height: usrSettings.h * 10,
-            })
-            document.querySelector("#gifCanvas").hidden = false
-            document.querySelector("#ScreenTooSmallWarning").hidden = true
-        }
+   async function generateGif(){
+       let splitPanels = document.querySelector("#splitPanels").checked;
+       let scaleFactor = saving ? 1 : 10;
+       var stage;
+       console.log(usrSettings.w,  usrSettings.h, scaleFactor)
+       if (splitPanels && window.innerWidth <= 480) {
+           stage = new Konva.Stage({
+               container: 'gifCanvas',
+               width: usrSettings.w * scaleFactor,
+               height: usrSettings.h * scaleFactor,
+           })
+           document.querySelector("#gifCanvas").hidden = true;
+           document.querySelector("#ScreenTooSmallWarning").hidden = false;
+       } else {
+           stage = new Konva.Stage({
+               container: 'gifCanvas',
+               width: window.innerWidth <= 480 ? usrSettings.w * scaleFactor / 2 : usrSettings.w * scaleFactor,
+               height: usrSettings.h * scaleFactor,
+           });
+           document.querySelector("#gifCanvas").hidden = false;
+           document.querySelector("#ScreenTooSmallWarning").hidden = true;
+       }
 
-        var layer = new Konva.Layer();
-        layer.add(new Konva.Rect({
-            x:0,
-            y:0,
-            width: stage.width(),
-            height: stage.height(),
-            fill: document.querySelector("#color2").value
+       var layer = new Konva.Layer();
+       layer.add(new Konva.Rect({
+           x: 0,
+           y: 0,
+           width: stage.width(),
+           height: stage.height(),
+           fill: document.querySelector("#color2").value
+       }));
 
-        }))
-        var text = new Konva.Text({
-            x: 0,
-            y: document.querySelector("#ypos").value *10,
-            text: document.querySelector("#text1").value,
-            fontSize: 9*10,
-            fontFamily: 'Calibri',
-            fill: document.querySelector("#color1").value
-        });
-        var text2 = undefined
-        let flashRect = undefined
-        if(splitPanels){
+       var text = new Konva.Text({
+           x: 0,
+           y: document.querySelector("#ypos").value * scaleFactor,
+           text: document.querySelector("#text1").value,
+           fontSize: 9 * scaleFactor,
+           fontFamily: "Pixelify Sans",
+           fill: document.querySelector("#color1").value
+       });
+       var text2 = undefined;
+       let flashRect = undefined;
+       if (splitPanels) {
 
-            text2 = new Konva.Text({
-                x: stage.width()/2,
-                y: document.querySelector("#ypos").value *10,
-                text: document.querySelector("#text1").value,
-                fontSize: 9*10,
-                fontFamily: 'Calibri',
-                fill: document.querySelector("#color1").value
-            })
-        }
-        if(text2){
-            text2.offsetX(0);
-            text.offsetX(0);
-            layer.add(text)
-            layer.add(text2)
+           text2 = new Konva.Text({
+               x: stage.width() / 2,
+               y: document.querySelector("#ypos").value * scaleFactor,
+               text: document.querySelector("#text1").value,
+               fontSize: 9 * scaleFactor,
+               fontFamily: 'Calibri',
+               fill: document.querySelector("#color1").value
+           });
+       }
+       if (text2) {
+           text2.offsetX(0);
+           text.offsetX(0);
+           layer.add(text);
+           layer.add(text2);
 
-        }else {
-      text.offsetX(0);
-      layer.add(text)
-        }
+       } else {
+           text.offsetX(0);
+           layer.add(text);
+       }
 
         // Get the animation type selected by the user.
         const direction = document.getElementById("animationSelection").getAttribute("data-animation")
         let bounceLock = false
-        var animSpeed = 3.5
-        var anim = startScrollAnimation(direction, text);
-        var anim2 = (text2)?startScrollAnimation(direction, text):undefined
+        var animSpeed = speedMultiplier
         var effectiveStageWidth = (text2) ? stage.width()/2 : stage.width();
 
-        function startScrollAnimation(direction, txtObj) {
-            if(!splitPanels){
-            return new Konva.Animation(function (frame) {
-                animSpeed = Math.sign(animSpeed)* frame.timeDiff / 100* speedMultiplier;  // adjust scrolling speed
-                if (direction === "scrl-l") {
-                    txtObj.x() <= -txtObj.width() ? text.x(effectiveStageWidth) : txtObj.move({x: -animSpeed});
-                }
-                if (direction === "scrl-r") {
-                    txtObj.x() >= stage.width() ? text.x(-text.width()) : txtObj.move({x: animSpeed});
-                }
-                if(direction == "bnc-lr"){
-                    if(!bounceLock && text.x() >=effectiveStageWidth-text.width()){
-                        bounceLock = true;
-                        animSpeed = -Math.abs(animSpeed)
-                    }else if(bounceLock && text.x() <= 0){
-                        bounceLock=false;
-                        animSpeed *= -1;
-                    }
-                    txtObj.move({x: animSpeed})
-                }
-            }, layer);
-            }else{
-                return new Konva.Animation(function (frame) {
-                    animSpeed = Math.sign(animSpeed) * frame.timeDiff / 100 * speedMultiplier;  // adjust scrolling speed
-                    if (direction == "bnc-lr") {
-                        if (!bounceLock && text.x() >= effectiveStageWidth - text.width()) {
-                            bounceLock = true;
-                            animSpeed = -Math.abs(animSpeed)
-                        } else if (bounceLock && text.x() <= 0) {
-                            bounceLock = false;
-                            animSpeed *= -1;
-                        }
-                        (txtObj.move({x: animSpeed}),
-                        text2 && text2.move({x: animSpeed}));
-                    }
-                }, layer);
-            }
-        }
+       async function startScrollAnimation(direction, txtObj) {
+           let frames = []
+           let limit = 200;
+           let originalPosition = txtObj.x()
+           let effectiveStageWidth = (splitPanels) ? stage.width() / 2 : stage.width();
+           let gifWidth = (splitPanels) ? stage.width() / 2 : stage.width();
 
+           for (let i = 0; i < limit; i++) {
+               if (direction === "scrl-l") {
+                   txtObj.x() <= -txtObj.width() ? text.x(effectiveStageWidth) : txtObj.move({x: -speedMultiplier});
+               }
+               if (direction === "scrl-r") {
+                   if (i === 0) {
+                       originalPosition
+                   }
+                   txtObj.x() >= effectiveStageWidth ? text.x(-(Math.round(text.width() / 10)) * 10) : txtObj.move({x: +speedMultiplier});
+               }
+               if (direction === "bnc-lr") {
+                   if (i === 0) {
+                       bounceLock = txtObj.x() <= 0 ? false : true;
+                   }
+
+                   if (txtObj.x() <= 0) {
+                       bounceLock = false;
+                   } else if (txtObj.x() >= effectiveStageWidth - txtObj.width()) {
+                       bounceLock = true;
+                   }
+
+                   if (bounceLock) {
+                       txtObj.move({x: -speedMultiplier});
+                   } else {
+                       txtObj.move({x: +speedMultiplier});
+                   }
+               }
+               console.log(Math.floor(txtObj.x()), originalPosition)
+
+               if (i > 4 && Math.floor(txtObj.x()) === originalPosition) {
+                   break;
+               }
+
+               if (saving) {
+                   //generate gif
+                   frames.push(stage._toKonvaCanvas().toDataURL("img/png", 1))
+               } else {
+                   await new Promise(r => setTimeout(r, 33));
+               }
+           }
+           if (saving) {
+               console.log("Saving animation")
+               gifshot.createGIF({
+                   gifWidth: gifWidth,
+                   gifHeight: stage.height(),
+                   images: frames,
+                   interval: 0.033,
+                   numFrames: frames.length,
+                   numWorkers: 4
+               }, function (obj) {
+                   if (!obj.error) {
+                       var image = obj.image;
+                       let formData = new FormData();
+
+                       // Fetch the image data and blob it
+                       fetch(image)
+                           .then(res => res.blob())
+                           .then(blob => {
+                               // Append the blob to FormData
+                               formData.append('file', blob, 'filename');
+
+                               // Check if a new name has been specified
+                               let newName = document.querySelector('#text1').value + ".gif";
+                               if (newName !== '') {
+                                   formData.set('file', blob, newName);
+                               }
+                               
+
+                               // Send the POST request to the server
+                               $.ajax({
+                                   type: "POST",
+                                   url: "/fileUpload",
+                                   data: formData,
+                                   processData: false,
+                                   contentType: false, // the request must include this line to correctly send a file
+                               }).done((response) => {
+                                   showToast(`File Upload Complete`, response)
+                                   
+                               })
+                           })
+
+                   }
+                   saving = false
+               })
+           }
+       }
         // Call the function with the previously determined direction.
+        stage.add(layer)
         startScrollAnimation(direction, text);
 
-        if(anim2) {
-            anim2.start()
-        }
-        stage.add(layer)
 
-      anim.start()
-        var gif = new GIF({
-            workers: 4,
-            quality: 10,
-            background: `#${document.getElementById("color2").value}`,
-            width:usrSettings.w,
-            height: usrSettings.h
-        })
 
     }
 

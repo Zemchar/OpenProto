@@ -2,7 +2,7 @@
   "chain_count": 2,
     "columns": 32,
     "rows": 16,
-    "remapping": "adafruit",
+    "remapping": "adafruit-hat",
     "brightness" : 100,
   "password-protected": false
 }

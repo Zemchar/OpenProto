@@ -1,3 +1,5 @@
+<img src="icon.png" width="50%">
+
 # OpenProto
 A system to control your protogen with little effort (assuming you have done it in a similar way to me)
 

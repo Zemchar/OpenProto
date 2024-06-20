@@ -134,8 +134,7 @@ def worker():
         if expression == previousExpression:
             cur_frame = 0
             while cur_frame < len(memoryFrames):  # this does mean it can only swap on the last frame
-                matrix.SwapOnVSync(memoryFrames[cur_frame], framerate_fraction=(40 if (expression.refreshrate == -1)
-                                                                                else expression.refreshrate))
+                matrix.SwapOnVSync(memoryFrames[cur_frame], framerate_fraction=20)
                 cur_frame += 1
         else:
             if expression.filetype == "gif":
