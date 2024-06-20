@@ -1,8 +1,51 @@
 {
-  "chain_count": 2,
-    "columns": 32,
-    "rows": 16,
-    "remapping": "adafruit-hat",
-    "brightness" : 100,
-  "password-protected": false
+  "Chain Length": {
+    "type": "INT",
+    "value": 2,
+    "description": "The length of the chain/the number of panels being controlled with 2 being two panels wired in series"
+  },
+  "Columns": {
+    "type": "INT",
+    "value": 32,
+    "description": "The number of columns in a single panel. Usually a multiple of 16"
+  },
+  "Rows": {
+    "type": "INT",
+    "value": 16,
+    "description": "The number of rows in a single panel. Usually a multiple of 16"
+  },
+  "Remapping": {
+    "type": "MULTICHOICE",
+    "choices": [
+      "regular",
+      "adafruit-hat",
+      "adafruit-hat-pwm",
+      "compute-module"
+    ],
+    "value": 1,
+    "description": "The hardware remapping type. If you followed the build guide, leave this one as adafruit-hat"
+  },
+  "Brightness": {
+    "type": "RANGEINT",
+    "min": 0,
+    "max": 100,
+    "value": 100,
+    "description": "The brightness of the whole panel. More brightness uses more power"
+  },
+  "Password Protected": {
+    "type": "MULTICHOICE",
+    "choices": [
+      "no",
+      "partial",
+      "client",
+      "total"
+    ],
+    "value": "false",
+    "description": "<b>No:</b> No password protection<br><b>Partial:</b> Settings and Expressions are password-protected<br><b>Client:</b> The web client is completely password protected. Server does not verify requests<br><b>Total:</b> Client is password protected and the server requires verification"
+  },
+  "Max Refresh Rate": {
+    "type": "INT",
+    "value": 60,
+    "description": "The refresh rate. This will change the speed of your animations, use with caution."
+  }
 }

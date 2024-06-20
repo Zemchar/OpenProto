@@ -38,14 +38,28 @@ Displaying: Nothing
     <div class="container">
 
         <h2>Settings</h2>
-        {% for key, pair in settings.items() %}
+        {% for key in settings %}
             <div class="setting-item">
-                <label for="{{key}}">{{key}}</label>
-                <input id="{{key}}" type="text" value="{{pair}}">
+                <label for="{{ key }}">{{ key }}</label>
+                {% if settings[key]['type'] == "MULTICHOICE" %}
+                    <select id="{{ key }}">
+                        {% for choice in settings[key]['choices'] %}
+                            {% if loop.index0 == settings[key]['value'] %}
+                                <option value="{{ choice }}" selected>{{ choice }}</option>
+                            {% else %}
+                                <option value="{{ choice }}">{{ choice }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <input id="{{ key }}" type="number" value="{{ settings[key]['value'] }}">
+                {% endif %}
+                <br>
+                <p>{{ settings[key]['description']|safe }}</p>
             </div>
         {% endfor %}
 
-        <h2 class="underline">Expressions</h2>
+        <h2>Expressions</h2>
         <form id="expression-form">
             {% for expression in expr %}
             <div id="{{expression}}" class="expression-item">

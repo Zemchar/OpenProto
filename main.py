@@ -1,15 +1,17 @@
 # !/usr/bin/env python
 import asyncio
+import base64
 import json
 import random
 import sys
-import base64
 import time
-from urllib import request
-from flask import Flask, render_template, request, flash
 from multiprocessing import Process, Queue
-from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
+from urllib import request
+
 from PIL import Image
+from flask import Flask, render_template, request, flash
+from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
+
 from Expression import Expression
 
 global killFlag
@@ -118,6 +120,7 @@ def worker():
     options.chain_length = usrSettings["chain_count"]
     options.parallel = 1
     options.hardware_mapping = usrSettings["remapping"]
+    options.limit_refresh_rate_hz = usrSettings["refresh_rate_hz"]
 
     matrix = RGBMatrix(options=options)
     print(f"{matrix.width}x{matrix.height}")
@@ -191,6 +194,7 @@ if __name__ == '__main__':
         # expression_queue.put(Expression("Nothing", "pulsar"))
         with open("settings.json") as settings_file:
             usrSettings = json.load(settings_file)
+            print(usrSettings)
             settings_file.close()
         displayThread = Process(target=worker)
         displayThread.start()
