@@ -1,14 +1,8 @@
-# This is a sample Python script.
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 # !/usr/bin/env python
 import asyncio
 import json
 import random
 import sys
-import threading
-
-import DisplayMethods
 import base64
 import time
 from urllib import request
@@ -123,6 +117,7 @@ def worker():
     options.cols = usrSettings["columns"]
     options.chain_length = usrSettings["chain_count"]
     options.parallel = 1
+    options.hardware_mapping = usrSettings["remapping"]
 
     matrix = RGBMatrix(options=options)
     print(f"{matrix.width}x{matrix.height}")
