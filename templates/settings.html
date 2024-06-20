@@ -9,32 +9,6 @@ Displaying: Nothing
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .setting-item, .expression-item {
-            background: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        .underline {
-            text-decoration: underline;
-        }
-    </style>    
     <div class="container">
 
         <h2>Settings</h2>
@@ -93,7 +67,7 @@ Displaying: Nothing
 
             $.ajax({
                 type: "POST",
-                url: "/settings",               // modify with your endpoint
+                url: "/settings",              
                 data: formData,
                 contentType: false,
                 processData: false,

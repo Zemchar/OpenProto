@@ -189,7 +189,7 @@ async def backgroundTextLoader(expression, matrix):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     global usrSettings
-
+    
     try:
         # expression_queue.put(Expression("Nothing", "pulsar"))
         with open("settings.json") as settings_file:

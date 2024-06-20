@@ -11,81 +11,15 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
-        <style>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+        <link rel="icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
 
-
-            .pixelify-sans {
-                font-family: "Pixelify Sans", sans-serif;
-                font-optical-sizing: auto;
-                font-weight: 400;
-                font-style: normal;
-            }
-
-            html, body {
-                --primary: #ae527e;
-                --secondary: #df95b6;
-                --accent: #d0637e;
-                background-color: #f0f0f0;
-                margin: 0;
-            }
-
-            #menu {
-                position: fixed;
-                width: 0;
-                height: 100vh;
-                transition: width 0.5s;
-                overflow: clip;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                background-color: lightcoral;
-                z-index: 99999; /* Add this line of code */
-            }
-
-            button {
-                background-color: var(--secondary);
-                color: #fff;
-                border: none;
-                border-radius: 5px;
-                padding: 10px 20px;
-                cursor: pointer;
-                transition: all 0.3s ease-in-out;
-            }
-
-            button:hover {
-                background-color: var(--accent);
-            }
-
-            #header {
-                position: sticky;
-                top: 0;
-                left: 0;
-                right: 0;
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                background-color: var(--primary);
-                padding: 10px;
-                margin: 0;
-                border-bottom-left-radius: 15px;
-                border-bottom-right-radius: 15px;
-            }
-
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                display: grid;
-                margin: 0;
-            }
-
-            #content {
-                display: flex;
-                justify-content: center;
-                max-width: 98vw !important;
-            }
-        </style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;1,500&display=swap"
+              rel="stylesheet">
     {% endblock %}
 </head>
 <body>
