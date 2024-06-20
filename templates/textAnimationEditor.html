@@ -1,148 +1,165 @@
 {% extends 'Base.html' %}
 {% block title %}Animation Editor{% endblock %}
 {% block curDisplay %}
-{% if currentDisplay %}
-Displaying: {{ currentDisplay }}
-{% else %}
-Displaying: Nothing
-{% endif %}
+    {% if currentDisplay %}
+        Displaying: {{ currentDisplay }}
+    {% else %}
+        Displaying: Nothing
+    {% endif %}
 {% endblock %}
 {% block content %}
 
-<style>
-    .section {
-        margin: 5px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-        text-align: center;
-        padding-left: 4px;
+    <style>
+        .section {
+            margin: 5px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 15px;
+            text-align: center;
+            padding-left: 4px;
 
-    }
+        }
 
-    .animation-grid {
-        justify-self: center;
-        display: inline-grid;
-        grid-template-columns: auto auto auto;
-        grid-gap: 5px;
+        .animation-grid {
+            justify-self: center;
+            display: inline-grid;
+            grid-template-columns: auto auto auto;
+            grid-gap: 5px;
 
-        border-radius: 10px;
-        border: dashed rgba(51, 51, 51, 0.55);
-        padding: 5px;
-    }
+            border-radius: 10px;
+            border: dashed rgba(51, 51, 51, 0.55);
+            padding: 5px;
+        }
 
-    .seriousModeBtn {
-        background-color: red;
-    }
+        .seriousModeBtn {
+            background-color: red;
+        }
 
-    span {
-        margin-left: 5px;
-        margin-right: 5px;
-    }
+        span {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
 
-    #animationSections {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-</style>
-<style>
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 73px;
-        height: 34px;
-    }
+        #animationSections {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+    </style>
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 73px;
+            height: 34px;
+        }
 
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
 
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 30px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 30px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
 
-    input:checked + .slider {
-        background-color: var(--secondary);
-    }
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
 
-    input:focus + .slider {
-        box-shadow: 0 0 1px var(--secondary);
-    }
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--secondary);
+        }
 
-    input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-    }
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
 
-    .slider.round {
-        border-radius: 34px;
-    }
+        .slider.round {
+            border-radius: 34px;
+        }
 
-    .slider.round:before {
-        border-radius: 50%;
-    }
-</style>
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
 
-<div id="animationSections"
-     style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
-    <div class="section">
-        <form onsubmit="formSubmission(event)" oninput="generateGif()">
-            <label for="text1">Text</label><br>
-            <textarea id="text1" rows="1" cols="50" placeholder="Enter text..."></textarea>
-            <p id="animationSelection" data-animation=none">Select Animation</p>
-            <div class="animation-grid">
-                <button onclick="updateAnimationSelection(event)" data-splitBlock="true" data-animation="scrl-l" class="animation-btn">Scroll Left</button>
-                <button onclick="updateAnimationSelection(event)" data-splitBlock="true" data-animation="scrl-r" class="animation-btn">Scroll Right</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="inv-fl" class="animation-btn">Inversion Flash</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="circ-o" class="animation-btn">Circle Out</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="circ-i" class="animation-btn">Circle In</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="bnc-ud" class="animation-btn">Bounce Up/Down</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="bnc-lr" class="animation-btn">Bounce Left/Right</button>
-                <button onclick="updateAnimationSelection(event)" data-animation="none" class="animation-btn seriousModeBtn">None</button>
+    <div id="animationSections"
+         style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <div class="section">
+            <form onsubmit="formSubmission(event)" oninput="generateGif()">
+                <label for="text1">Text</label><br>
+                <textarea id="text1" rows="1" cols="50" placeholder="Enter text..."></textarea>
+                <p id="animationSelection" data-animation=none">Select Animation</p>
+                <div class="animation-grid">
+                    <button onclick="updateAnimationSelection(event)" data-splitBlock="true" data-animation="scrl-l"
+                            class="animation-btn">Scroll Left
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-splitBlock="true" data-animation="scrl-r"
+                            class="animation-btn">Scroll Right
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="inv-fl" class="animation-btn">
+                        Inversion Flash
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="circ-o" class="animation-btn">
+                        Circle Out
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="circ-i" class="animation-btn">
+                        Circle In
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="bnc-ud" class="animation-btn">
+                        Bounce Up/Down
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="bnc-lr" class="animation-btn">
+                        Bounce Left/Right
+                    </button>
+                    <button onclick="updateAnimationSelection(event)" data-animation="none"
+                            class="animation-btn seriousModeBtn">None
+                    </button>
 
-            </div>
-            <div style="display: flex; margin-top:10px; justify-content: space-between;">
+                </div>
+                <div style="display: flex; margin-top:10px; justify-content: space-between;">
                 <span>
                     <label id="Speed" for="speed1">Speed: </label><br>
-                    <input oninput="updateFrames(this)" type="range" id="speed1" name="speed1" min="1" max="20" value="2.5" step="1">
+                    <input oninput="updateFrames(this)" type="range" id="speed1" name="speed1" min="1" max="20"
+                           value="2.5" step="1">
                 </span>
-                <span>
+                    <span>
                     <label id="yPosLabel" for="ypos">Y Position</label><br>
-                    <input oninput="" type="range" id="ypos" name="ypos" min="0" max="{{settings['rows']}}" value="0">
+                    <input oninput="" type="range" id="ypos" name="ypos" min="0" max="{{ settings['rows'] }}" value="0">
                 </span>
-            </div>
-            <div style="display: flex; margin-top:10px; justify-content: space-between;">
+                </div>
+                <div style="display: flex; margin-top:10px; justify-content: space-between;">
                 <span>
                     <label for="color1">Color</label><br>
                     <input type="color" id="color1" name="txtColor" value="#ff69b4">
                 </span>
-                <span>
+                    <span>
                     <label for="color2">Background Color</label><br>
                     <input type="color" id="color2" name="bgColor">
                 </span>
-                <span>
+                    <span>
 
             <span>
                 <label for="splitPanels">Split Panels</label><br>
@@ -153,267 +170,273 @@ Displaying: Nothing
             </span>
                 </span>
 
-            </div>
+                </div>
 
 
-            <!-- Add more buttons for other animations -->
+                <!-- Add more buttons for other animations -->
 
-        </form>
+            </form>
+        </div>
+        <div style="display: grid; gap: 5px; grid-template-columns: auto auto">
+            <button onClick="generateGif()">Restart Animation</button>
+            <button onclick="saving = true; generateGif()">Save Animation</button>
+        </div>
+        <hr>
+        <div id="gifCanvas" class="pixelify-sans"></div>
+        <h1 id="ScreenTooSmallWarning" style="color: red; text-align: center; padding-left: 2px">Your screen is too
+            small to render split panel animations, but one will still be created</h1>
+
+        <!-- Add more sections by duplicating the above div, ensure unique IDs -->
     </div>
-    <div style="display: grid; gap: 5px; grid-template-columns: auto auto">
-        <button onClick="generateGif()">Restart Animation</button>
-        <button onclick="saving = true; generateGif()">Save Animation</button>
-    </div>
-    <hr>
-    <div id="gifCanvas" class="pixelify-sans"></div>
-    <h1 id="ScreenTooSmallWarning" style="color: red; text-align: center; padding-left: 2px">Your screen is too small to render split panel animations, but one will still be created</h1>
 
-    <!-- Add more sections by duplicating the above div, ensure unique IDs -->
-</div>
-
-<meta id="usrSettings" data-width="{{ settings['columns'] * settings['chain_count'] }}"
-      data-height="{{ settings['rows'] }}">
-<script src="../static/js/gif.js"></script>
-<script src="{{ url_for('static', filename='js/gif.js') }}"></script>
-    <script src="https://unpkg.com/gifshot@0.4.5/dist/gifshot.js"></script>
+    <meta id="usrSettings" data-width="{{ settings['columns'] * settings['chain_count'] }}"
+          data-height="{{ settings['rows'] }}">
+    <script src="../static/js/gif.js"></script>
+    <script src="{{ url_for('static', filename='js/gif.js') }}"></script>
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
-<script>
-    let saving = false
-    
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"
+            integrity="sha512-nNOFtIS+H0lwgdUDaPn/g1ssw3uN9AkEM7zy2wLaTQeLQNeNiitUcLpEpDIh3Z4T22MdeTNru/SQbNM4ig2rng=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js"
+            integrity="sha512-3piO8GKVGn3D+eEWnTquDnlxM00ESMZpYNAnjmOMswHrGihZvdlsRjSW1bHLqahzIoyL9YWlLWVYRV4J8AHwtg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        let saving = false
 
-    function updateAllowedButtons(event) {
+        function updateAllowedButtons(event) {
 
-        let buttons = document.querySelectorAll('.animation-btn');
-        if(event.target.checked){
-        buttons.forEach(button => {
-            if (button.getAttribute('data-splitBlock')) {
-                button.disabled = true;
-                button.style.backgroundColor = 'grey';
-            }
-        });
-        }else{
-            buttons.forEach(button => {
-            if (button.getAttribute('data-splitBlock')) {
-                button.disabled = false;
-                button.style.backgroundColor = '';
-            }
-        });
-        }
-}
-
-let usrSettings
-    let speedMultiplier = 0;
-    window.onload = () => {
-        updateFrames(document.querySelector("#speed1"))
-        let d =  document.getElementById("usrSettings").dataset
-        usrSettings = {w: d.width,
-        h: d.height}
-        document.querySelector("button.animation-btn:nth-child(8)").click()
-        document.querySelector("#splitPanels").checked=false;
-    }
-
-   async function generateGif(){
-       let splitPanels = document.querySelector("#splitPanels").checked;
-       let scaleFactor = saving ? 1 : 10;
-       var stage;
-       console.log(usrSettings.w,  usrSettings.h, scaleFactor)
-       if (splitPanels && window.innerWidth <= 480) {
-           stage = new Konva.Stage({
-               container: 'gifCanvas',
-               width: usrSettings.w * scaleFactor,
-               height: usrSettings.h * scaleFactor,
-           })
-           document.querySelector("#gifCanvas").hidden = true;
-           document.querySelector("#ScreenTooSmallWarning").hidden = false;
-       } else {
-           stage = new Konva.Stage({
-               container: 'gifCanvas',
-               width: window.innerWidth <= 480 ? usrSettings.w * scaleFactor / 2 : usrSettings.w * scaleFactor,
-               height: usrSettings.h * scaleFactor,
-           });
-           document.querySelector("#gifCanvas").hidden = false;
-           document.querySelector("#ScreenTooSmallWarning").hidden = true;
-       }
-
-       var layer = new Konva.Layer();
-       layer.add(new Konva.Rect({
-           x: 0,
-           y: 0,
-           width: stage.width(),
-           height: stage.height(),
-           fill: document.querySelector("#color2").value
-       }));
-
-       var text = new Konva.Text({
-           x: 0,
-           y: document.querySelector("#ypos").value * scaleFactor,
-           text: document.querySelector("#text1").value,
-           fontSize: 9 * scaleFactor,
-           fontFamily: "Pixelify Sans",
-           fill: document.querySelector("#color1").value
-       });
-       var text2 = undefined;
-       let flashRect = undefined;
-       if (splitPanels) {
-
-           text2 = new Konva.Text({
-               x: stage.width() / 2,
-               y: document.querySelector("#ypos").value * scaleFactor,
-               text: document.querySelector("#text1").value,
-               fontSize: 9 * scaleFactor,
-               fontFamily: 'Calibri',
-               fill: document.querySelector("#color1").value
-           });
-       }
-       if (text2) {
-           text2.offsetX(0);
-           text.offsetX(0);
-           layer.add(text);
-           layer.add(text2);
-
-       } else {
-           text.offsetX(0);
-           layer.add(text);
-       }
-
-        // Get the animation type selected by the user.
-        const direction = document.getElementById("animationSelection").getAttribute("data-animation")
-        let bounceLock = false
-        var animSpeed = speedMultiplier
-        var effectiveStageWidth = (text2) ? stage.width()/2 : stage.width();
-
-       async function startScrollAnimation(direction, txtObj) {
-           let frames = []
-           let limit = 200;
-           let originalPosition = txtObj.x()
-           let effectiveStageWidth = (splitPanels) ? stage.width() / 2 : stage.width();
-           let gifWidth = (splitPanels) ? stage.width() / 2 : stage.width();
-
-           for (let i = 0; i < limit; i++) {
-               if (direction === "scrl-l") {
-                   txtObj.x() <= -txtObj.width() ? text.x(effectiveStageWidth) : txtObj.move({x: -speedMultiplier});
-               }
-               if (direction === "scrl-r") {
-                   if (i === 0) {
-                       originalPosition
-                   }
-                   txtObj.x() >= effectiveStageWidth ? text.x(-(Math.round(text.width() / 10)) * 10) : txtObj.move({x: +speedMultiplier});
-               }
-               if (direction === "bnc-lr") {
-                   if (i === 0) {
-                       bounceLock = txtObj.x() <= 0 ? false : true;
-                   }
-
-                   if (txtObj.x() <= 0) {
-                       bounceLock = false;
-                   } else if (txtObj.x() >= effectiveStageWidth - txtObj.width()) {
-                       bounceLock = true;
-                   }
-
-                   if (bounceLock) {
-                       txtObj.move({x: -speedMultiplier});
-                   } else {
-                       txtObj.move({x: +speedMultiplier});
-                   }
-               }
-               console.log(Math.floor(txtObj.x()), originalPosition)
-
-               if (i > 4 && Math.floor(txtObj.x()) === originalPosition) {
-                   break;
-               }
-
-               if (saving) {
-                   //generate gif
-                   frames.push(stage._toKonvaCanvas().toDataURL("img/png", 1))
-               } else {
-                   await new Promise(r => setTimeout(r, 33));
-               }
-           }
-           if (saving) {
-               console.log("Saving animation")
-               gifshot.createGIF({
-                   gifWidth: gifWidth,
-                   gifHeight: stage.height(),
-                   images: frames,
-                   interval: 0.033,
-                   numFrames: frames.length,
-                   numWorkers: 4
-               }, function (obj) {
-                   if (!obj.error) {
-                       var image = obj.image;
-                       let formData = new FormData();
-
-                       // Fetch the image data and blob it
-                       fetch(image)
-                           .then(res => res.blob())
-                           .then(blob => {
-                               // Append the blob to FormData
-                               formData.append('file', blob, 'filename');
-
-                               // Check if a new name has been specified
-                               let newName = document.querySelector('#text1').value + ".gif";
-                               if (newName !== '') {
-                                   formData.set('file', blob, newName);
-                               }
-                               
-
-                               // Send the POST request to the server
-                               $.ajax({
-                                   type: "POST",
-                                   url: "/fileUpload",
-                                   data: formData,
-                                   processData: false,
-                                   contentType: false, // the request must include this line to correctly send a file
-                               }).done((response) => {
-                                   showToast(`File Upload Complete`, response)
-                                   
-                               })
-                           })
-
-                   }
-                   saving = false
-               })
-           }
-       }
-        // Call the function with the previously determined direction.
-        stage.add(layer)
-        startScrollAnimation(direction, text);
-
-
-
-    }
-
-    function updateAnimationSelection(event) {
-        event.preventDefault(); // preventing the form submission.
-
-                // updating the data tag of #animationSelection with the data tag of the clicked button.
-        document.getElementById("animationSelection").setAttribute("data-animation",
-            event.target.getAttribute("data-animation"));
-
-        const buttons = document.getElementsByClassName('animation-btn');
-
-        for (let i = 0; i < buttons.length; i++) {
-            if(!buttons[i].disabled) {
-                buttons[i].style.backgroundColor = "";
+            let buttons = document.querySelectorAll('.animation-btn');
+            if (event.target.checked) {
+                buttons.forEach(button => {
+                    if (button.getAttribute('data-splitBlock')) {
+                        button.disabled = true;
+                        button.style.backgroundColor = 'grey';
+                    }
+                });
+            } else {
+                buttons.forEach(button => {
+                    if (button.getAttribute('data-splitBlock')) {
+                        button.disabled = false;
+                        button.style.backgroundColor = '';
+                    }
+                });
             }
         }
-        event.target.style.backgroundColor = "green";
-        generateGif()
-    }
-    // Placeholder function for "Add Section"
-    function addSection() {
-        alert('This would add another section in a real implementation.');
-    }
-    function updateFrames(range){
-        let speed = document.getElementById("Speed")
-        speed.innerText = "Speed: " + range.value;
-        speedMultiplier = range.value
-    }
-    function formSubmission(event){
-        event.preventDefault()
+
+        let usrSettings
+        let speedMultiplier = 0;
+        window.onload = () => {
+            updateFrames(document.querySelector("#speed1"))
+            let d = document.getElementById("usrSettings").dataset
+            usrSettings = {
+                w: d.width,
+                h: d.height
+            }
+            document.querySelector("button.animation-btn:nth-child(8)").click()
+            document.querySelector("#splitPanels").checked = false;
+        }
+
+        async function generateGif() {
+            let splitPanels = document.querySelector("#splitPanels").checked;
+            let scaleFactor = saving ? 1 : 10;
+            var stage;
+            console.log(usrSettings.w, usrSettings.h, scaleFactor)
+            if (splitPanels && window.innerWidth <= 480) {
+                stage = new Konva.Stage({
+                    container: 'gifCanvas',
+                    width: usrSettings.w * scaleFactor,
+                    height: usrSettings.h * scaleFactor,
+                })
+                document.querySelector("#gifCanvas").hidden = true;
+                document.querySelector("#ScreenTooSmallWarning").hidden = false;
+            } else {
+                stage = new Konva.Stage({
+                    container: 'gifCanvas',
+                    width: window.innerWidth <= 480 ? usrSettings.w * scaleFactor / 2 : usrSettings.w * scaleFactor,
+                    height: usrSettings.h * scaleFactor,
+                });
+                document.querySelector("#gifCanvas").hidden = false;
+                document.querySelector("#ScreenTooSmallWarning").hidden = true;
+            }
+
+            var layer = new Konva.Layer();
+            layer.add(new Konva.Rect({
+                x: 0,
+                y: 0,
+                width: stage.width(),
+                height: stage.height(),
+                fill: document.querySelector("#color2").value
+            }));
+
+            var text = new Konva.Text({
+                x: 0,
+                y: document.querySelector("#ypos").value * scaleFactor,
+                text: document.querySelector("#text1").value,
+                fontSize: 9 * scaleFactor,
+                fontFamily: "Pixelify Sans",
+                fill: document.querySelector("#color1").value
+            });
+            var text2 = undefined;
+            let flashRect = undefined;
+            if (splitPanels) {
+
+                text2 = new Konva.Text({
+                    x: stage.width() / 2,
+                    y: document.querySelector("#ypos").value * scaleFactor,
+                    text: document.querySelector("#text1").value,
+                    fontSize: 9 * scaleFactor,
+                    fontFamily: 'Calibri',
+                    fill: document.querySelector("#color1").value
+                });
+            }
+            if (text2) {
+                text2.offsetX(0);
+                text.offsetX(0);
+                layer.add(text);
+                layer.add(text2);
+
+            } else {
+                text.offsetX(0);
+                layer.add(text);
+            }
+
+            // Get the animation type selected by the user.
+            const direction = document.getElementById("animationSelection").getAttribute("data-animation")
+            let bounceLock = false
+            var animSpeed = speedMultiplier
+            var effectiveStageWidth = (text2) ? stage.width() / 2 : stage.width();
+
+            async function startScrollAnimation(direction, txtObj) {
+                let frames = []
+                let limit = 200;
+                let originalPosition = txtObj.x()
+                let effectiveStageWidth = (splitPanels) ? stage.width() / 2 : stage.width();
+                let gifWidth = (splitPanels) ? stage.width() / 2 : stage.width();
+                var gif = new GIF({
+                    workers: 3,
+                    quality: 0,
+                    width: gifWidth,
+                    height: usrSettings.h,
+                    transparent: 0x000000
+                });
+                for (let i = 0; i < limit; i++) {
+                    if (direction === "scrl-l") {
+                        txtObj.x() <= -txtObj.width() ? text.x(effectiveStageWidth) : txtObj.move({x: -speedMultiplier});
+                    }
+                    if (direction === "scrl-r") {
+                        if (i === 0) {
+                            originalPosition
+                        }
+                        txtObj.x() >= effectiveStageWidth ? text.x(-(Math.round(text.width() / 10)) * 10) : txtObj.move({x: +speedMultiplier});
+                    }
+                    if (direction === "bnc-lr") {
+                        if (i === 0) {
+                            bounceLock = txtObj.x() <= 0 ? false : true;
+                        }
+
+                        if (txtObj.x() <= 0) {
+                            bounceLock = false;
+                        } else if (txtObj.x() >= effectiveStageWidth - txtObj.width()) {
+                            bounceLock = true;
+                        }
+
+                        if (bounceLock) {
+                            txtObj.move({x: -speedMultiplier});
+                        } else {
+                            txtObj.move({x: +speedMultiplier});
+                        }
+                    }
+                    console.log(Math.floor(txtObj.x()), originalPosition)
+
+                    if (i > 4 && Math.floor(txtObj.x()) === originalPosition) {
+                        break;
+                    }
+
+                    if (saving) {
+                        //generate gif
+                        gif.addFrame(stage._toKonvaCanvas(), {delay: 33})
+                    } else {
+                        await new Promise(r => setTimeout(r, 33));
+                    }
+                }
+                if (saving) {
+                    console.log("Saving animation")
+                    gif.on('finished', function (obj) {
+                        if (!obj.error) {
+                            let formData = new FormData();
+
+                            // Fetch the image data and blob it
+                            fetch(obj)
+                                .then(res => res.blob())
+                                .then(blob => {
+                                    // Append the blob to FormData
+                                    formData.append('file', blob, 'filename');
+
+                                    // Check if a new name has been specified
+                                    let newName = document.querySelector('#text1').value + ".gif";
+                                    if (newName !== '') {
+                                        formData.set('file', blob, newName);
+                                    }
+
+                                    // Send the POST request to the server
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/fileUpload",
+                                        data: formData,
+                                        processData: false,
+                                        contentType: false, // the request must include this line to correctly send a file
+                                    }).done((response) => {
+                                        showToast(`File Upload Complete`, response)
+
+                                    })
+                                })
+
+                        }
+                    })
+                    gif.render()
+                }
+            }
+
+            // Call the function with the previously determined direction.
+            stage.add(layer)
+            startScrollAnimation(direction, text);
 
 
-    }
-</script>
+        }
+
+        function updateAnimationSelection(event) {
+            event.preventDefault(); // preventing the form submission.
+
+            // updating the data tag of #animationSelection with the data tag of the clicked button.
+            document.getElementById("animationSelection").setAttribute("data-animation",
+                event.target.getAttribute("data-animation"));
+
+            const buttons = document.getElementsByClassName('animation-btn');
+
+            for (let i = 0; i < buttons.length; i++) {
+                if (!buttons[i].disabled) {
+                    buttons[i].style.backgroundColor = "";
+                }
+            }
+            event.target.style.backgroundColor = "green";
+            generateGif()
+        }
+
+        // Placeholder function for "Add Section"
+        function addSection() {
+            alert('This would add another section in a real implementation.');
+        }
+
+        function updateFrames(range) {
+            let speed = document.getElementById("Speed")
+            speed.innerText = "Speed: " + range.value;
+            speedMultiplier = range.value
+        }
+
+        function formSubmission(event) {
+            event.preventDefault()
+
+
+        }
+    </script>
 {% endblock %}
