@@ -56,7 +56,7 @@ I won't be showing you how to build a fursuit (sorry)
    1. If you have multiple displays, pick the display you would like to be first in series and connect the ribbon cable
       from it's input side to the bonnet.
    2. When this is done, connect however many displays you have together through the first board's *output* terminal,
-      wiring this to the next display's input terminal.55
+      wiring this to the next display's input terminal.
 5. Connect your raspberry pi to power through the barrel jack on the bonnet. You do not need to provide USB power to the
    raspberry pi, as it can fetch enough through the barrel jack.
 6. Flash your raspberry pi with a LITE image.
@@ -67,6 +67,7 @@ I won't be showing you how to build a fursuit (sorry)
 
 This project is licensed under The GNU General Public License (GPLv3.0) License.
 
+You can:
 - **Use** - You are allowed to use the software for any purpose, commercial or otherwise.
 - **Modify** - You can modify the source code.
 - **Distribute** - You can distribute the original or the modified software.

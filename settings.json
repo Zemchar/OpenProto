@@ -1,9 +1,5 @@
 {
-  "Chain Length": {
-    "type": "INT",
-    "value": 2,
-    "description": "The length of the chain/the number of panels being controlled with 2 being two panels wired in series"
-  },
+
   "Columns": {
     "type": "INT",
     "value": 32,
@@ -13,6 +9,21 @@
     "type": "INT",
     "value": 16,
     "description": "The number of rows in a single panel. Usually a multiple of 16"
+  },
+  "Chain Length": {
+    "type": "INT",
+    "value": 2,
+    "description": "The length of the chain/the number of panels being controlled with 2 being two panels wired in series"
+  },
+  "Panel Treatment": {
+    "type": "MULTICHOICE",
+    "choices": [
+      "Continuous",
+      "Duplicate",
+      "Mirrored"
+    ],
+    "value": 2,
+    "description": "How to treat panels in a chain. If your chain length is ≤1, this has no effect<br>If not Continuous, all expressions will be cropped if they are greater in width than the number of rows specified above<br><b>Continuous:</b> This treats all connected panels as one, long panel<br><b>Duplicate:</b> Each panel will display the same image<br><b>Mirrored:</b> Each panel will display the same image, but mirrored. This is good if you want to have the images be in the same place on each panel"
   },
   "Remapping": {
     "type": "MULTICHOICE",
@@ -31,17 +42,6 @@
     "max": 100,
     "value": 100,
     "description": "The brightness of the whole panel. More brightness uses more power"
-  },
-  "Password Protected": {
-    "type": "MULTICHOICE",
-    "choices": [
-      "no",
-      "partial",
-      "client",
-      "total"
-    ],
-    "value": "false",
-    "description": "<b>No:</b> No password protection<br><b>Partial:</b> Settings and Expressions are password-protected<br><b>Client:</b> The web client is completely password protected. Server does not verify requests<br><b>Total:</b> Client is password protected and the server requires verification"
   },
   "Max Refresh Rate": {
     "type": "INT",

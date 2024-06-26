@@ -12,11 +12,12 @@ Displaying: Nothing
     <div class="container">
 
         <h2>Settings</h2>
+        <form id="settings-form">
         {% for key in settings %}
             <div class="setting-item">
                 <label for="{{ key }}">{{ key }}</label>
                 {% if settings[key]['type'] == "MULTICHOICE" %}
-                    <select id="{{ key }}">
+                    <select id="{{ key }}" name="{{ key }}">
                         {% for choice in settings[key]['choices'] %}
                             {% if loop.index0 == settings[key]['value'] %}
                                 <option value="{{ choice }}" selected>{{ choice }}</option>
@@ -25,13 +26,21 @@ Displaying: Nothing
                             {% endif %}
                         {% endfor %}
                     </select>
+
+                {% elif settings[key]['type'] == "RANGEINT" %}
+                    <input id="{{ key }}" name="{{ key }}" type="range" min="{{ settings[key]['min'] }}"
+                           max="{{ settings[key]['max'] }}"
+                           value="{{ settings[key]['value'] }}">
                 {% else %}
-                    <input id="{{ key }}" type="number" value="{{ settings[key]['value'] }}">
+                    <input id="{{ key }}" name="{{ key }}" type="number" value="{{ settings[key]['value'] }}">
                 {% endif %}
                 <br>
                 <p>{{ settings[key]['description']|safe }}</p>
             </div>
         {% endfor %}
+            <button id="saveSettings" type="submit">Save & Apply</button>
+        </form>
+
 
         <h2>Expressions</h2>
         <form id="expression-form">
@@ -48,6 +57,7 @@ Displaying: Nothing
 
     <script>
         let sanityCheck = false;
+        let sanityCheck2 = false;
         const form = document.getElementById('expression-form');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -61,13 +71,13 @@ Displaying: Nothing
                 sanityCheck = false;
                 let deleteButton = document.getElementById("deleteBtn");
                 deleteButton.innerText = "Deleting...";
-                deleteButton.style.backgroundColor = "mint";
+                deleteButton.style.backgroundColor = "#85ff78";
             }
             let formData = new FormData(form);
 
             $.ajax({
                 type: "POST",
-                url: "/settings",              
+                url: "/editExpressions",              
                 data: formData,
                 contentType: false,
                 processData: false,
@@ -88,5 +98,47 @@ Displaying: Nothing
                 showToast("Failed to delete items", "error")
             });
         });
+        const form2 = document.getElementById("settings-form")
+        form2.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let saveBtn = document.getElementById("saveSettings")
+
+            if (!sanityCheck2) {
+                saveBtn.style.backgroundColor = "#ffd54d";
+                saveBtn.innerText = "This will restart your display!"
+                sanityCheck2 = true;
+                return
+            } else {
+                sanityCheck2 = false;
+                saveBtn.innerText = "Saving..."
+                saveBtn.style.backgroundColor = "#85ff78"
+            }
+
+            let formData = new FormData(form2)
+            for (let [key, field] of formData.entries()) {
+                let input = document.getElementById(key);
+                if (input.tagName === "SELECT") {
+                    console.log(key, input.selectedIndex);
+                    formData.set(key, input.selectedIndex)
+                } else {
+                    console.log(key, field);
+                }
+            }
+            console.log(formData)
+            $.ajax({
+                type: "POST",
+                url: "/settings",
+                data: formData,
+                contentType: false,
+                processData: false,
+            }).done((response) => {
+                showToast(`Saved Settings`, response)
+                saveBtn.innerText = "Save & Apply"
+                saveBtn.style.backgroundColor = "";
+            }).fail(() => {
+                console.log("Error in POST request");
+                showToast("Failed to save settings", "error")
+            });
+        })
     </script>
 {% endblock %}

@@ -18,7 +18,7 @@ global killFlag
 killFlag = False
 # Start process
 app = Flask(__name__, static_url_path="/static", static_folder="static")
-app.secret_key = "t4t"
+app.secret_key = "YWoIkfT33hZV98Uoo8THajNYRhVYzYHK"
 import os
 
 global displayThread
@@ -68,6 +68,32 @@ def textAnimator():
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    files_content = []
+    for file in os.listdir("expressions"):
+        files_content.append(file)
+
+    if (request.method == 'POST'):
+        tempSetting = usrSettings.copy()
+        for key in tempSetting.keys():
+            newVal = request.form.get(key)
+            try:
+                newVal = int(newVal)
+            except ValueError:
+                print("Not an int")
+                pass
+            tempSetting[key]["value"] = newVal
+
+        with open('settings.json', 'w') as f:
+            json.dump(tempSetting, f, indent=4)
+
+        # Restart display after saving
+        reloadDisplay()
+        return "success", 200
+    return render_template("settings.html", currentDisplay=curr_display, settings=usrSettings, expr=files_content)
+
+
+@app.route('/editExpressions', methods=['POST'])
+def editExpressions():
     # assuming the file paths are sent via a form data in POST request body
     if request.method == 'POST':
         print(request.form)
@@ -80,12 +106,17 @@ def settings():
             except FileNotFoundError:
                 return "Error", 404
         return "success", 200
-    files_content = []
 
-    for file in os.listdir("expressions"):
-        files_content.append(file)
 
-    return render_template("settings.html", currentDisplay=curr_display, settings=usrSettings, expr=files_content)
+def reloadDisplay():
+    global usrSettings, displayThread
+    usrSettings = json.loads(open('settings.json').read())
+    displayThread.terminate()
+    displayThread.join()
+    displayThread = Process(target=worker)
+    displayThread.start()
+    print("Reloaded Display")
+    
 
 
 ## ENDFLASK
@@ -98,12 +129,27 @@ async def backgroundGifLoader(expression, matrix):
     print(f"[BACKGROUND] Loading {gif.n_frames} frames")
     for frame_index in range(0, gif.n_frames):
         gif.seek(frame_index)
-        # must copy the frame out of the gif, since thumbnail() modifies the image in-place
         frame = gif.copy()
         frame.thumbnail((matrix.width, matrix.height))
-
+        frame = frame.convert("RGB")
         canvas = matrix.CreateFrameCanvas()
-        canvas.SetImage(frame.convert("RGB"))
+        if usrSettings["Panel Treatment"]["value"] == 2:
+            half_width = matrix.width // 2
+            mirror_frame = frame.copy().transpose(Image.FLIP_LEFT_RIGHT).crop(
+                (0, 0, min(frame.width, half_width), frame.height))
+            frame = frame.crop((0, 0, min(frame.width, half_width), frame.height))
+            offsetX = max(half_width - mirror_frame.width, 0)
+            canvas.SetImage(frame, 0, 0)
+            canvas.SetImage(mirror_frame, half_width + offsetX, 0)
+        elif usrSettings["Panel Treatment"]["value"] == 1:
+            half_width = matrix.width // 2
+            frame = frame.crop((0, 0, min(frame.width, half_width), frame.height))
+            offsetX = max(half_width - frame.width, 0)
+            canvas.SetImage(frame, 0, 0)
+            canvas.SetImage(frame, half_width + offsetX, 0)
+
+        else:
+            canvas.SetImage(frame)
         newFrames.append(canvas)
     gif.close()
     print(f"[BACKGROUND] Loaded {gif.n_frames} frames")
@@ -115,12 +161,12 @@ def worker():
     global usrSettings
     previousExpression = Expression("Nothing", "Pulsar", 20)
     options = RGBMatrixOptions()
-    options.rows = usrSettings["rows"]
-    options.cols = usrSettings["columns"]
-    options.chain_length = usrSettings["chain_count"]
+    options.rows = usrSettings["Rows"]["value"]
+    options.cols = usrSettings["Columns"]["value"]
+    options.chain_length = usrSettings["Chain Length"]["value"]
     options.parallel = 1
-    options.hardware_mapping = usrSettings["remapping"]
-    options.limit_refresh_rate_hz = usrSettings["refresh_rate_hz"]
+    options.hardware_mapping = usrSettings["Remapping"]["choices"][usrSettings["Remapping"]["value"]]
+    options.limit_refresh_rate_hz = usrSettings["Max Refresh Rate"]["value"]
 
     matrix = RGBMatrix(options=options)
     print(f"{matrix.width}x{matrix.height}")
@@ -137,18 +183,35 @@ def worker():
         if expression == previousExpression:
             cur_frame = 0
             while cur_frame < len(memoryFrames):  # this does mean it can only swap on the last frame
-                matrix.SwapOnVSync(memoryFrames[cur_frame], framerate_fraction=20)
+                matrix.SwapOnVSync(memoryFrames[cur_frame],
+                                   framerate_fraction=2)  # framerate fraction = maxrefresh / integer = real fps. 
                 cur_frame += 1
         else:
             if expression.filetype == "gif":
                 # Load in background
                 frames = asyncio.run(backgroundGifLoader(expression, matrix))
-            if expression.filetype == "png":  # no need to background because its literally 1 frame
+            if expression.filetype == "png" or expression.filetype == "jpg":  # no need to background because its literally 1 frame
                 frames.clear()
                 png = Image.open(expression.filename)
                 png.thumbnail((matrix.width, matrix.height))
+                png = png.convert("RGB")
                 canvas = matrix.CreateFrameCanvas()
-                canvas.SetImage(png.convert("RGB"))
+                if usrSettings["Panel Treatment"]["value"] == 2:
+                    half_width = matrix.width // 2
+                    mirror_frame = png.copy().transpose(Image.FLIP_LEFT_RIGHT).crop(
+                        (0, 0, min(png.width, half_width), png.height))
+                    frame = png.crop((0, 0, min(png.width, half_width), png.height))
+                    offsetX = max(half_width - mirror_frame.width, 0)
+                    canvas.SetImage(frame, 0, 0)
+                    canvas.SetImage(mirror_frame, half_width + offsetX, 0)
+                elif usrSettings["Panel Treatment"]["value"] == 1:
+                    half_width = matrix.width // 2
+                    frame = png.crop((0, 0, min(png.width, half_width), png.height))
+                    offsetX = max(half_width - frame.width, 0)
+                    canvas.SetImage(frame, 0, 0)
+                    canvas.SetImage(frame, half_width + offsetX, 0)
+                else:
+                    canvas.SetImage(png)
                 frames.append(canvas)
                 matrix.Clear()
                 png.close()

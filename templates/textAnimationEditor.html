@@ -68,7 +68,6 @@
                 <label for="splitPanels">Split Panels</label><br>
                 <label class="switch">
                     <input type="checkbox" oninput="updateAllowedButtons(event)" id="splitPanels">
-                    <span class="slider round"></span>
                 </label>
             </span>
                 </span>
@@ -92,8 +91,8 @@
         <!-- Add more sections by duplicating the above div, ensure unique IDs -->
     </div>
 
-    <meta id="usrSettings" data-width="{{ settings['columns'] * settings['chain_count'] }}"
-          data-height="{{ settings['rows'] }}">
+    <meta id="usrSettings" data-width="{{ settings['Columns']['value'] * settings['Chain Length']['value'] }}"
+          data-height="{{ settings['Rows']['value'] }}">
     <script src="../static/js/gif.js"></script>
     <script src="{{ url_for('static', filename='js/gif.js') }}"></script>
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
