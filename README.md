@@ -1,5 +1,5 @@
 <p align="center">
-<img src="icon.png" width="50%" height="50%">
+<img src="static/icons/icon.png" width="50%" height="50%">
 </p>
 <h1 align="center">OpenProto</h1>
 <h3 align="center"><i>The most beautiful way to control your Protogen</i></h3>
@@ -12,16 +12,24 @@
   through a phone hotspot
 - A text animation framework for quickly creating new text-based animated expressions
 - Customizable panel parameters to allow for a wide range of configurations
-- Integration with in-suit electronics
+- Continuous, Mirrored, And Duplicated modes for chained panels
 - Asynchronous loading of animations & smart swapping for a seamless experience
+
+### Special thanks to Ray for all the awesome art!
 
 ## Installation & Running
 
 1. Clone this repository on your raspberry pi and run `sudo sh first_run.sh` on your first installation.
 2. Reboot your system if you were prompted to
 3. (Optional) open a screen instance to allow you to run the program in the background
-4. run `sudo python3 main.py` to start the program
+4. Run `sudo python3 main.py` to start the program
 5. Connect to the web interface via your raspberry pi's IP address, adjust your settings, and go!
+
+> [!WARNING]
+> This server is NOT secure.
+> The idea is you run this only on a local network, like a phone hotspot!
+> In this case your weakest link is the security of the network this is connected to. Don't leave this passwordless
+> Be careful who you give access!
 
 #### Depends On:
 - [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix)
@@ -57,13 +65,17 @@ I won't be showing you how to build a fursuit (sorry)
       from it's input side to the bonnet.
    2. When this is done, connect however many displays you have together through the first board's *output* terminal,
       wiring this to the next display's input terminal.
+
+*psst. If you need more help wiring
+check [this guide!](https://github.com/hzeller/rpi-rgb-led-matrix/blob/a3eea997a9254b83ab2de97ae80d83588f696387/wiring.md)*
+
 5. Connect your raspberry pi to power through the barrel jack on the bonnet. You do not need to provide USB power to the
    raspberry pi, as it can fetch enough through the barrel jack.
 6. Flash your raspberry pi with a LITE image.
 7. Install & run this software as specified [here](#installation--running)
 8. Enjoy! Your hardware mapping should be set to adafruit-hat, but if it is not change that in settings
 
-## Licensing Info
+## Legal Mumbo Jumbo
 
 This project is licensed under The GNU General Public License (GPLv3.0) License.
 
