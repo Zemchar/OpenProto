@@ -14,6 +14,7 @@
 - Customizable panel parameters to allow for a wide range of configurations
 - Continuous, Mirrored, And Duplicated modes for chained panels
 - Asynchronous loading of animations & smart swapping for a seamless experience
+- Fursuit not required!
 
 ### Special thanks to Ray for all the awesome art!
 
@@ -25,11 +26,14 @@
 4. Run `sudo python3 main.py` to start the program
 5. Connect to the web interface via your raspberry pi's IP address, adjust your settings, and go!
 
-> [!WARNING]
-> This server is NOT secure.
-> The idea is you run this only on a local network, like a phone hotspot!
-> In this case your weakest link is the security of the network this is connected to. Don't leave this passwordless
-> Be careful who you give access!
+> [!WARNING] 
+> **This server is NOT secure, nor was it designed to be!**
+> 
+> The idea is you run this only on a local network YOU control, like a phone hotspot or your local home network!
+>
+> Do **NOT** expose this server to the internet and be careful to whom you give access
+>
+> If you want access beyond your local net, consider setting something like [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) up instead
 
 #### Depends On:
 - [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix)
