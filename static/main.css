@@ -54,6 +54,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    overflow: hidden;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
     height: 200px;
     flex-basis: calc(50% - 15px); /* it will make sure there are at least two items per row */

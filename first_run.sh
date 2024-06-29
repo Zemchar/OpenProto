@@ -14,7 +14,7 @@ REBOOTNEEDED="false"
 read -p "Add isolcpus=3 to /boot/firmware/cmdline.txt to improve display update speed? (y/N): " answer1
 if [[ "$answer1" = "y" || "$answer1" = "Y" ]]; then
     echo "Adding"
-    echo "isolcpus=3" >> /boot/firmware/cmdline.txt
+    echo " isolcpus=3" >> /boot/firmware/cmdline.txt
     export REBOOTNEEDED="true"
 else
     echo "Ok."

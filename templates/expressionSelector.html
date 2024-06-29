@@ -21,7 +21,7 @@ Displaying: Nothing
     {% for file, data_url in files.items() %}
     <div class="grid-item" data-id="{{file}}" onclick="communicateSelection('{{file}}')">
         <h2>{{ file.split(".")[0] }}</h2>
-        <img src="{{ data_url }}" alt="{{ file }}" style="height:80%; width:100%; object-fit: scale-down">
+        <img src="{{ data_url }}" alt="{{ file }}" style="height:80%; width:100%; object-fit: contain">
     </div>
     {% endfor %}
     {% else %}

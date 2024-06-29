@@ -46,6 +46,11 @@
   "Max Refresh Rate": {
     "type": "INT",
     "value": 60,
-    "description": "The refresh rate. This will change the speed of your animations, use with caution."
+    "description": "The maximum refresh rate of your panels. Default is 60. Changing this affects speed of animation."
+  },
+  "Framerate Fraction": {
+    "type": "INT",
+    "value": 4,
+    "description": "This is how much your animation is slowed down and is calculated through this equation:<br>Max Refresh Rate ÷ Framerate Fraction = Real FPS<br>Real FPS is currently: <b><a id=\"CalcFR\"></a></b><script>$(document).ready(function () {document.getElementById(\"CalcFR\").innerText = document.getElementById(\"Max Refresh Rate\").value/document.getElementById(\"Framerate Fraction\").value\n});</script></p>"
   }
 }

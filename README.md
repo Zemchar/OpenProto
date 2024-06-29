@@ -2,29 +2,38 @@
 <img src="static/icons/icon.png" width="50%" height="50%">
 </p>
 <h1 align="center">OpenProto</h1>
-<h3 align="center"><i>The most beautiful way to control your Protogen</i></h3>
-<h5 align="center">(Or any rgb panel project for that matter!) </h5>
+<h3 align="center"><i>Adding the "-gen" was just too much to ask for</i></h3>
 
+# Features
 
-## Features
-
-- A mobile-first (fursuit friendly!) web interface for controlling/adding your expressions designed to be accessed
+- A beautiful mobile-first (fursuit friendly!) web interface for controlling/adding your expressions, all designed to be
+  portable and accessed
   through a phone hotspot
-- A text animation framework for quickly creating new text-based animated expressions
+- A text animation editor for quickly creating new text-based animated expressions
+- Supports png, jpg, and gif for animated expressions
 - Customizable panel parameters to allow for a wide range of configurations
 - Continuous, Mirrored, And Duplicated modes for chained panels
 - Asynchronous loading of animations & smart swapping for a seamless experience
-- Fursuit not required!
+- Fursuit not required! (although this software *was* designed as protogen software)
 
 ### Special thanks to Ray for all the awesome art!
 
 ## Installation & Running
 
-1. Clone this repository on your raspberry pi and run `sudo sh first_run.sh` on your first installation.
+> [!Note]
+> This program was designed to be run on a raspberry pi and *requires* networking capabilities!
+
+1. Clone this repository on your raspberry pi and run `sudo bash first_run.sh` on your first installation.
+   1. Do not run this with `sh`! It will fail.
 2. Reboot your system if you were prompted to
 3. (Optional) open a screen instance to allow you to run the program in the background
+   1. This is not installed by default, so make sure to run `sudo apt-get install screen` if you don't already have
+      screen
 4. Run `sudo python3 main.py` to start the program
-5. Connect to the web interface via your raspberry pi's IP address, adjust your settings, and go!
+   1. If running under screen, detach from the screen instance with `ctrl+a+d`, you are now free to disconnect from your
+      pi.
+5. Connect to the web interface via your raspberry pi's IP address or hostname (I recommend your hostname), adjust your
+   settings, and go!
 
 > [!WARNING] 
 > **This server is NOT secure, nor was it designed to be!**
@@ -76,10 +85,12 @@ check [this guide!](https://github.com/hzeller/rpi-rgb-led-matrix/blob/a3eea997a
 5. Connect your raspberry pi to power through the barrel jack on the bonnet. You do not need to provide USB power to the
    raspberry pi, as it can fetch enough through the barrel jack.
 6. Flash your raspberry pi with a LITE image.
+   1. Do this either with balena etcher, or the official raspberry pi imager which has a few extra setup options
 7. Install & run this software as specified [here](#installation--running)
-8. Enjoy! Your hardware mapping should be set to adafruit-hat, but if it is not change that in settings
+8. Enjoy! Your hardware mapping should be set to adafruit-hat, but if it is not change that in settings (assuming you
+   used the adafruit bonnet of course!)
 
-## Legal Mumbo Jumbo
+## Legal Stuff
 
 This project is licensed under The GNU General Public License (GPLv3.0) License.
 
